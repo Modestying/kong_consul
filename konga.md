@@ -10,7 +10,6 @@
         -e "POSTGRES_USER=postgres" \
         -e "POSTGRES_PASSWORD=postgres" \
         -e "POSTGRES_DB=postgres" \
-        192.168.10.212:8089/smart_platform_v1.0 \
         postgres:v0.1
 ```
 

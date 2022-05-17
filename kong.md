@@ -14,7 +14,7 @@ docker run -d \
 -e "POSTGRES_USER=kong" \
 -e "POSTGRES_DB=kong" \
 -e "POSTGRES_PASSWORD=kong" \
-192.168.10.212:8089/smart_platform_v1.0/postgres:latest
+postgres:latest
 ```
 
 ## kong数据库连接
@@ -29,7 +29,7 @@ docker run --rm \
 -e "KONG_PG_USER=kong" \
 -e "KONG_PG_PASSWORD=kong" \
 -e "KONG_CASSANDRA_CONTACT_POINTS=kong-database" \
-192.168.10.212:8089/smart_platform_v1.0/kong:latest  kong migrations bootstrap
+kong:latest  kong migrations bootstrap
 ```
 
 ## 启动kong数据库
@@ -53,5 +53,5 @@ docker run --rm --name kong \
 -p 8510:8510 \
 -p 8509:8509 \
 -p 8508:8508 \
-192.168.10.212:8089/smart_platform_v1.0/kong:latest
+kong:latest
 ```

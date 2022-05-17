@@ -1,10 +1,15 @@
 # Consul 安装
 
 ><https://cloud.tencent.com/developer/article/1444664>
+>
 ><https://www.cnblogs.com/summerday152/p/14013439.html>
+>
 ><https://blog.csdn.net/hong10086/article/details/89440284#:~:text=ConsulAgent%20%E6%98%AF%20Consul%20%E7%9A%84%E6%A0%B8%E5%BF%83%E8%BF%9B%E7%A8%8B%EF%BC%8C%20Agent%20%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%98%AF%E7%BB%B4%E6%8A%A4%E6%88%90%E5%91%98%E5%85%B3%E7%B3%BB%E4%BF%A1%E6%81%AF%E3%80%81%E6%B3%A8%E5%86%8C%E6%9C%8D%E5%8A%A1%E3%80%81%E5%81%A5%E5%BA%B7%E6%A3%80%E6%9F%A5%E3%80%81%E5%93%8D%E5%BA%94%E6%9F%A5%E8%AF%A2%E7%AD%89%E7%AD%89%E3%80%82%20Consul,%E9%9B%86%E7%BE%A4%E7%9A%84%E6%AF%8F%E4%B8%80%E4%B8%AA%E8%8A%82%E7%82%B9%E9%83%BD%E5%BF%85%E9%A1%BB%E8%BF%90%E8%A1%8C%20agent%20%E8%BF%9B%E7%A8%8B%E3%80%82%20%E5%8F%82%E4%B8%8E%E8%AF%84%E8%AE%BA%20%E6%82%A8%E8%BF%98%E6%9C%AA%E7%99%BB%E5%BD%95%EF%BC%8C%E8%AF%B7%E5%85%88%20%E7%99%BB%E5%BD%95%20%E5%90%8E%E5%8F%91%E8%A1%A8%E6%88%96%E6%9F%A5%E7%9C%8B%E8%AF%84%E8%AE%BA>
+>
 >consul 镜像站点<https://hub.docker.com/_/consul/>
+>
 >consul agent文档<https://www.consul.io/docs/agent>
+>
 >kong API文档 <https://docs.konghq.com/gateway/2.8.x/admin-api/>
 
 ## Consul启动配置项
