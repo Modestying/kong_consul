@@ -5,17 +5,19 @@
 # 所以kong启动刚开始可能报错，但会不断重启，直到kong-migrations启动完成
 # 建议按照kong.md手动跑一遍，容易理解
 version: '3.9'
-
-networks:
-  kong-net:
-    driver: bridge
-    external: true
-
 services:
+  postgres:
+    image: "192.168.10.212:8089/smart_platform_v1.0/postgres:${TAG}"
+    container_name: postgres
+    environment:
+      POSTGRES_USER: kong
+      POSTGRES_PASSWORD: kong
+      POSTGRES_DB: kong
+    network_mode: 'host'
+    restart: always
+
   kong-database:
     image: "postgres:${TAG}"
-    networks:
-     - kong-net
     environment:
       POSTGRES_USER: kong
       POSTGRES_DB: kong
@@ -32,8 +34,6 @@ services:
       KONG_PG_PASSWORD: kong
       KONG_PASSWORD: kong
       KONG_CASSANDRA_CONTACT_POINTS: kong-database
-    networks:
-      - kong-net
     depends_on:
       - kong-database
     restart: on-failure
@@ -58,8 +58,6 @@ services:
       - 8510:8510
     volumes:
       - /opt/proto:/proto #挂载proto文件，与kong_init.sh中grpc_web配置相关
-    networks:
-      - kong-net
     depends_on:
       - kong-migrations
     healthcheck:

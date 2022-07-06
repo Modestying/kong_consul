@@ -40,52 +40,58 @@ docker-compose --env-file=.env up #docker-compose.yml启动
 
 ### server-leader
 
+192.168.10.174
 ```shell
-sudo docker run  -d \
-  --name=consul-leader\
-  --network=host \
-  -e CONSUL_BIND_INTERFACE=ens33 \
-  -p 8500:8500 \
-  --restart=always \
-  consul:latest \
-  agent \
-  -server=true \
-  -bootstrap \
-  -ui \
-  -node=leader\
-  -client='0.0.0.0'
+docker run -d --name=consul_153 \
+--network=host \
+-e CONSUL_BIND_INTERFACE=enp5s0f0 \
+consul agent \
+--server=true \
+--bootstrap-expect=1 \
+ -node=leader --client=0.0.0.0 -ui
 ```
 
 ### server
 
+201
+
 ```shell
-sudo docker run -d \
-  --name=consul_server_200 \
-  --network=host \
-  -e CONSUL_BIND_INTERFACE=ens33 \
-  -p 8500:8500 \
-  consul:latest \
-  agent -join=192.168.10.201 \
-  -server=true \
-  -ui \
-  -node=server_200\
-  -client='0.0.0.0'
+docker run --name=consul2 \
+--network=host \
+-e CONSUL_BIND_INTERFACE=ens33 \
+consul agent \
+--server=true \
+--client=0.0.0.0 \
+--join 192.168.10.174 -ui \
+-node=server_201
+```
+
+server2
+
+203
+
+```
+docker run  --name=consul3 \
+--network=host \
+-e CONSUL_BIND_INTERFACE=ens33 \
+consul agent \
+--server=true \
+--client=0.0.0.0 \
+--join 192.168.10.174 -ui \
+-node=server_203
 ```
 
 ### client
 
 ```shell
-sudo docker run -d \
-  --name=consul_client \
-  --network=host \
-  -e CONSUL_BIND_INTERFACE=ens33 \
-  -p 8500:8500 \
-  consul:latest \
-  agent -join=192.168.10.201 \
-  -client=true \
-  -ui \
-  -node=client\
-  -client='0.0.0.0'
+docker run --rm --name=consul_client_fyl \
+--network=host \
+ -e CONSUL_BIND_INTERFACE=enp5s0f0 \
+ consul agent \
+ --server=false \
+ --client=0.0.0.0 \
+ --join 192.168.10.203 -ui \
+ -node=client_153
 ```
 
 ### 注册服务
@@ -95,7 +101,7 @@ sudo docker run -d \
 ```shell
 curl --location --request PUT 'http://192.168.10.201:8500/v1/agent/service/register' \
 --header 'Content-Type: application/json' \
---data-raw '{
+-ata-raw '{
   "ID": "192.168.10.96:8080",
   "Name": "Demo",
   "Address": "192.168.10.96",
@@ -111,7 +117,7 @@ curl --location --request PUT 'http://192.168.10.201:8500/v1/agent/service/regis
 ```shell
 curl --location --request PUT 'http://192.168.10.200:8500/v1/agent/service/register' \
 --header 'Content-Type: application/json' \
---data-raw '{
+-ata-raw '{
   "ID": "192.168.10.96:8081",
   "Name": "8081",
   "Address": "192.168.10.96",
