@@ -1,18 +1,5 @@
 # konga安装部署
 
-## 启动容器
-
-这里用户可以改为kong
-
-```shell
-    docker run -d --name postgres \
-        -p 5432:5432 \
-        -e "POSTGRES_USER=postgres" \
-        -e "POSTGRES_PASSWORD=postgres" \
-        -e "POSTGRES_DB=postgres" \
-        postgres:v0.1
-```
-
 ## 修改用户
 
 ```shell
@@ -31,5 +18,16 @@
     create database konga owner konga;
 
     退出使用 \q
-
+```
+konga需要数据库`konga`，可以参考上面命令进入docker镜像创建`konga`库，或通过第三方工具如(navicat)连接postgresql，创建`konga`数据库
+```shell
+docker run -d --network=host \
+--name konga \
+-e "DB_ADAPTER=postgres" \
+-e "DB_HOST=192.168.10.174" \
+-e "DB_PORT=5432" \
+-e "DB_USER=kong" \
+-e "DB_PASSWORD=kong" \
+-e "DB_DATABASE=konga" \
+192.168.10.212:8089/smart_platform_v1.0/konga:v1.0
 ```

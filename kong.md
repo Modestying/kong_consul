@@ -7,14 +7,14 @@
 ## 需要konga，则postgresql启动参考konga.md
 
 ```shell
+不要用最新的postgres,存在问题
 docker run -d \
 --network=host \
 --name kong-database \
--p 5432:5432 \
 -e "POSTGRES_USER=kong" \
 -e "POSTGRES_DB=kong" \
 -e "POSTGRES_PASSWORD=kong" \
-postgres:latest
+postgres:9.6
 ```
 
 ## kong数据库连接
@@ -25,21 +25,22 @@ postgres:latest
 docker run --rm \
 --network=host \
 -e "KONG_DATABASE=postgres" \
--e "KONG_PG_HOST=192.168.10.201" \
+-e "KONG_PG_HOST=192.168.10.174" \
 -e "KONG_PG_USER=kong" \
 -e "KONG_PG_PASSWORD=kong" \
 -e "KONG_CASSANDRA_CONTACT_POINTS=kong-database" \
 kong:latest  kong migrations bootstrap
 ```
 
-## 启动kong数据库
+## 启动kong
 
 端口根据实际情况进行修改
 
 ```shell
-docker run --rm --name kong \
+docker run -d --name kong \
+--network=host \
 -e "KONG_DATABASE=postgres" \
--e "KONG_PG_HOST=192.168.10.201" \ #建议使用真实IP，而不是容器名
+-e "KONG_PG_HOST=192.168.10.174" \
 -e "KONG_PG_PASSWORD=kong" \
 -e "KONG_CASSANDRA_CONTACT_POINTS=kong-database" \
 -e "KONG_PROXY_ACCESS_LOG=/dev/stdout" \
@@ -48,10 +49,6 @@ docker run --rm --name kong \
 -e "KONG_ADMIN_ERROR_LOG=/dev/stderr" \
 -e "KONG_ADMIN_LISTEN=0.0.0.0:8510" \
 -e "KONG_PROXY_LISTEN=0.0.0.0:8508 http2,0.0.0.0:8509" \
--e "KONG_DNS_RESOLVER=192.168.10.201:8600" \ #可选项- 结合consul使用
--p 8000:8000 \ 
--p 8510:8510 \
--p 8509:8509 \
--p 8508:8508 \
+-e "KONG_DNS_RESOLVER=192.168.10.174:8600"  \
 kong:latest
 ```

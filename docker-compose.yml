@@ -6,8 +6,9 @@
 # 建议按照kong.md手动跑一遍，容易理解
 version: '3.9'
 services:
+
   postgres:
-    image: "192.168.10.212:8089/smart_platform_v1.0/postgres:${TAG}"
+    image: "postgres:9.6"
     container_name: postgres
     environment:
       POSTGRES_USER: kong
@@ -15,15 +16,13 @@ services:
       POSTGRES_DB: kong
     network_mode: 'host'
     restart: always
-
-  kong-database:
-    image: "postgres:${TAG}"
-    environment:
-      POSTGRES_USER: kong
-      POSTGRES_DB: kong
-      POSTGRES_PASSWORD: kong
-    ports:
-      - 5432:5432
+  
+  consul_server:
+    image: consul:latest
+    container_name: consul_server
+    restart: always
+    network_mode: host
+    command: agent -server=true -client=0.0.0.0 --bootstrap-expect=1 --node=leader -ui
 
   kong-migrations:
     image: "kong:${TAG}"
