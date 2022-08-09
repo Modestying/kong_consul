@@ -1,0 +1,66 @@
+# version: '3'
+# 启动 docker-compose --env-file=.env up
+# 如果需要konga，参考konga.md
+# depends_on只是要求服务A必须早于服务B启动，但并不是说A启动完成后才启动B
+# 所以kong启动刚开始可能报错，但会不断重启，直到kong-migrations启动完成
+# 建议按照kong.md手动跑一遍，容易理解
+version: '3.9'
+services:
+
+  postgres:
+    image: "postgres:9.6"
+    container_name: postgres
+    environment:
+      POSTGRES_USER: kong
+      POSTGRES_PASSWORD: kong
+      POSTGRES_DB: kong
+    network_mode: 'host'
+    restart: always
+  
+  consul_server:
+    image: consul:latest
+    container_name: consul_server
+    restart: always
+    network_mode: host
+    command: agent -server=true -client=0.0.0.0 --bootstrap-expect=1 --node=leader -ui
+
+  kong-migrations:
+    image: "kong:${TAG}"
+    command: kong migrations bootstrap
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: ${POSTGRES_IP}
+      KONG_PG_PASSWORD: kong
+      KONG_PASSWORD: kong
+      KONG_CASSANDRA_CONTACT_POINTS: kong-database
+    depends_on:
+      - kong-database
+    restart: on-failure
+
+  kong:
+    image: "kong:${TAG}"
+    environment:
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: ${POSTGRES_IP}
+      KONG_PG_PASSWORD: kong
+      KONG_CASSANDRA_CONTACT_POINTS: kong-database
+      KONG_ADMIN_LISTEN: 0.0.0.0:8510
+      KONG_PROXY_LISTEN: 0.0.0.0:8508 http2,0.0.0.0:8509
+      KONG_DNS_RESOLVER: ${CONSUL_IP}:8600
+    ports:
+      - 8508:8508
+      - 8509:8509
+      - 8510:8510
+    volumes:
+      - /opt/proto:/proto #挂载proto文件，与kong_init.sh中grpc_web配置相关
+    depends_on:
+      - kong-migrations
+    healthcheck:
+      test: [ "CMD", "kong", "health" ]
+      interval: 10s
+      timeout: 10s
+    restart: on-failure
