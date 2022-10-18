@@ -24,10 +24,9 @@ konga需要数据库`konga`，可以参考上面命令进入docker镜像创建`k
 docker run -d --network=host \
 --name konga \
 -e "DB_ADAPTER=postgres" \
--e "DB_HOST=192.168.10.96" \
--e "DB_PORT=5432" \
+-e "DB_HOST=192.168.10.48" \
 -e "DB_USER=kong" \
 -e "DB_PASSWORD=kong" \
 -e "DB_DATABASE=konga" \
-konga:latest
+pantsel/konga:latest
 ```
