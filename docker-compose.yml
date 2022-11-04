@@ -23,7 +23,7 @@ services:
     container_name: consul_server
     ports:
       - 8500:8500
-      - 8600:8600
+      - 8600:8600/udp #consul 8600 需要udp通信
     command: agent -server=true -client=0.0.0.0 --bootstrap-expect=1 --node=leader -ui
 
   kong-migrations:
@@ -46,7 +46,7 @@ services:
       KONG_ADMIN_ACCESS_LOG: /dev/stdout
       KONG_PROXY_ERROR_LOG: /dev/stderr
       KONG_ADMIN_ERROR_LOG: /dev/stderr
-      KONG_PG_HOST: postgres
+      KONG_PG_HOST: ${POSTGRES_IP}
       KONG_DATABASE: postgres
       KONG_PG_PASSWORD: kong
       KONG_ADMIN_LISTEN: 0.0.0.0:8510
@@ -64,6 +64,7 @@ services:
       test: [ "CMD", "kong", "health" ]
       interval: 10s
       timeout: 10s
+    network_mode: 'host' #must,后续查找
     restart: on-failure
 
   konga:

@@ -13,38 +13,45 @@ echo "脚本名: $0";
 echo "IP: $1";
 echo "Port:" $2;
 declare -A ServiceMap
-ServiceMap["hello"]=8503
+#ServiceMap["hello"]=8503
+
+ServiceMap["hello"]="hello.service.consul"
 
 for key in ${!ServiceMap[*]};do
     #添加服务
     curl -i -X POST http://$1:$2/services/ \
-            --data name=$key \
-            --data protocol="grpc" \
-            --data host=$1 \
-            --data port=${ServiceMap[$key]}
+                    --data name=$key \
+                    --data protocol="grpc" \
+                    --data host=${ServiceMap[$key]}
 
     #为服务添加cros和jwt插件
     curl -i -X POST http://$1:$2/services/$key/plugins \
-            --data name=cors
-    curl -i -X POST http://$1:$2/services/$key/plugins \
-            --data name=jwt #--data "config.claims_to_verify=exp"
+                    --data name=cors
 
     #服务添加路由
     curl -i -X POST http://$1:$2/services/$key/routes \
-            --data name=$key \
-            --data protocols="grpc" \
-            --data-urlencode paths="/"$key \
-            --data path_handling=v1
+                    --data name=$key \
+                    --data protocols="grpc" \
+                    --data paths="/"$key \
+                    --data path_handling=v1
+    
+    curl -i -X POST http://$1:$2/routes/$key/plugins \
+                    --data name=jwt 
+
     curl -i -X POST http://$1:$2/services/$key/routes \
-            --data name=$key"_web" \
-            --data hosts[]=$1":8509" \
-            --data-urlencode paths="/"$key \
-            --data protocols[]="http" \
-            --data protocols[]="https" \
-            --data path_handling=v1
-            
-    # #_web路由添加grpc_web插件
+                    --data name=$key"_web" \
+                    --data hosts[]=$1":8509" \
+                    --data paths="/"$key \
+                    --data protocols[]="http" \
+                    --data protocols[]="https" \
+                    --data  path_handling=v1
+
     curl -i -X POST http://$1:$2/routes/$key"_web"/plugins \
-            --data name=grpc-web \
-            --data config.proto="/proto/"$key"/"$key".proto"
+                    --data name=jwt \
+                    --data "config.claims_to_verify=exp"
+
+    ##_web路由添加grpc_web插件
+    curl -i -X POST http://$1:$2/routes/$key"_web"/plugins \
+                    --data name=grpc-web \
+                    --data config.proto="/proto/"$key"/"$key".proto"
 done
