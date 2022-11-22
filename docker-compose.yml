@@ -7,7 +7,7 @@
 version: '3.9'
 services:
 
-  postgres:
+  kong-database:
     image: "postgres:9.6"
     container_name: postgres
     environment:
@@ -64,7 +64,7 @@ services:
       test: [ "CMD", "kong", "health" ]
       interval: 10s
       timeout: 10s
-    network_mode: 'host' #must,后续查找
+    #network_mode: 'host' #must,后续查找
     restart: on-failure
 
   konga:
