@@ -1,6 +1,6 @@
 #/bin/bash
 # author: fyl
-
+# 联系方式: 
 #文件说明:为kong网关注册服务和路由，并添加jwt(鉴权)、cors(跨域支持)、grpc_web访问插件，根据自己需求进行修改
 
 #使用方法 ./kong_init 本机IP kong的KONG_ADMIN_LISTEN端口号(8510)
@@ -35,8 +35,8 @@ for key in ${!ServiceMap[*]};do
                     --data paths="/"$key \
                     --data path_handling=v1
     
-    curl -i -X POST http://$1:$2/routes/$key/plugins \
-                    --data name=jwt 
+    # curl -i -X POST http://$1:$2/routes/$key/plugins \
+    #                 --data name=jwt 
 
     curl -i -X POST http://$1:$2/services/$key/routes \
                     --data name=$key"_web" \
@@ -55,3 +55,5 @@ for key in ${!ServiceMap[*]};do
                     --data name=grpc-web \
                     --data config.proto="/proto/"$key"/"$key".proto"
 done
+
+echo "kong init success"

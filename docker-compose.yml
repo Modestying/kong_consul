@@ -31,8 +31,9 @@ services:
       - local
     ports:
       - 8500:8500
-      - 8600:8600/udp #consul 8600 需要udp通信
-    command: agent -server=true -client=0.0.0.0 --bootstrap-expect=1 --node=leader -ui
+      #- 8600:8600/udp #consul 8600 需要udp通信
+      - 53:53/udp #dns服务器端口 53 需要udp通信
+    command: agent -server=true -client=0.0.0.0 --bootstrap-expect=1 --node=leader -dns-port=53 -ui
 
   kong-migrations:
     image: "kong:${TAG}"
@@ -60,7 +61,7 @@ services:
       KONG_PG_PASSWORD: kong
       KONG_ADMIN_LISTEN: 0.0.0.0:8510
       KONG_PROXY_LISTEN: 0.0.0.0:8508 http2,0.0.0.0:8509
-      KONG_DNS_RESOLVER: ${CONSUL_IP}:8600
+      KONG_DNS_RESOLVER: ${CONSUL_IP}:53
     networks:
       - local
     ports:
@@ -76,6 +77,18 @@ services:
       interval: 10s
       timeout: 10s
     restart: on-failure
+
+  hello:
+    image: hello:test
+    container_name: hello
+    networks:
+      - local
+    ports:
+      - 8000:8000
+      - 9000:9000
+    volumes:
+      - ./configs:/data/conf
+    
 
   konga:
     image: "pantsel/konga:latest"
